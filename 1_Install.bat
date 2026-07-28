@@ -1,21 +1,16 @@
 @echo off
 title Traffic AI Setup
-echo ==========================================
-echo    Installing Traffic AI Environment...
-echo ==========================================
 cd /d "%~dp0"
-
-echo [1/2] Creating virtual environment...
+echo Checking for AI Model...
+if not exist "Model" mkdir Model
+if exist "Model\Model.gguf" (
+    echo Model exists, skipping download.
+) else (
+    echo Downloading model...
+    curl -L -o "Model\Model.gguf" "https://huggingface.co/RichardErkhov/scb10x_-_llama-3-typhoon-v1.5x-8b-instruct-gguf/resolve/main/llama-3-typhoon-v1.5x-8b-instruct.IQ3_M.gguf"
+)
+echo Creating virtual environment...
 python -m venv .venv
-
-echo [2/2] Installing required packages...
 call .venv\Scripts\activate.bat
-python -m pip install --upgrade pip
 pip install -r requirements.txt
-
-echo.
-echo ==========================================
-echo    Installation Complete! 
-echo    You can now double-click "2_Start_AI.vbs"
-echo ==========================================
 pause

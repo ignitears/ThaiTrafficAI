@@ -107,10 +107,10 @@ async def approve_user(payload: ApprovePayload):
     if payload.username in waiting_room:
         waiting_room[payload.username]["status"] = payload.status
     return {"status": "success"}
-
 @app.get("/api/waiting-list")
+
 async def get_waiting_list():
     pending = [name for name, data in waiting_room.items() if data["status"] == "pending"]
     return {"pending_users": pending}
 
-    app.mount("/", StaticFiles(directory="public", html=True), name="public")
+app.mount("/", StaticFiles(directory="public", html=True), name="public")

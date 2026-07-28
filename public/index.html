@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character AI Local</title>
+    <script>
+        async function verifySession() {
+            // Never block the local host computer
+            if (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") {
+                return;
+            }
+
+            const user = localStorage.getItem("sessionUser");
+            if (!user) return; 
+
+            const res = await fetch(`/api/check-status?username=${user}`);
+            const data = await res.json();
+            
+            if (data.status !== "approved") {
+                window.location.href = "/waiting.html";
+            }
+        }
+        verifySession();
+    </script>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <div id="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="main-container">
+        <header>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <span id="current-char-name" style="font-size: 1.2rem;">An AI about traffic</span>
+            </div>
+            
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div class="custom-dropdown" id="theme-dropdown">
+                    <button class="dropdown-toggle" onclick="toggleThemeMenu()">
+                        <span id="current-theme-name">Gemini Minimal</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item" onclick="selectTheme('theme-gemini', 'Gemini Minimal')">Gemini Minimal</div>
+                        <div class="dropdown-item" onclick="selectTheme('theme-cyber', 'Cyber-Futuristic')">Cyber-Futuristic</div>
+                        <div class="dropdown-item" onclick="selectTheme('theme-proxy', 'Proxy Terminal')">Proxy Terminal</div>
+                        <div class="dropdown-item" onclick="selectTheme('theme-hollow-mist', 'Hollow Mist')">Hollow Mist</div>
+                        <div class="dropdown-item" onclick="selectTheme('theme-granite-oasis', 'Granite Oasis')">Granite Oasis</div>                    </div>
+                </div>
+                <button class="debug-btn" onclick="toggleDebug()">Debug Status</button>
+            </div>
+        </header>
+        <div id="chat-box">
+            <div id="typing-wrapper" class="typing-wrapper" style="display: none;">
+                <div class="typing-indicator"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+        <div id="input-area">
+            <button class="icon-btn" onclick="regenerateMessage()" title="Regenerate">↻</button>
+            <button class="icon-btn" onclick="continueMessage()" title="Continue">▶</button>
+            <input type="text" id="msg-input" placeholder="Type a message..." autocomplete="off">
+            <button class="send" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <div id="debug-sidebar">
+        <div class="debug-content">
+            <div class="debug-header">
+                <span style="color: var(--text-muted); font-weight: bold; letter-spacing: 1px;">DEBUG PANEL</span>
+                <button class="close-btn" onclick="toggleDebug()">✕</button>
+            </div>
+            
+            <div id="admin-panel" style="border: 1px solid var(--accent); padding: 10px; margin-top: 10px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0;">Pending Connections</h3>
+                    <button class="debug-btn" style="padding: 4px 10px; font-size: 12px;" onclick="refreshWaitingList()">Refresh</button>
+                </div>
+                <div id="pending-list">None</div>
+            </div>
+
+            <script>
+                async function refreshWaitingList() {
+                    const res = await fetch('/api/waiting-list');
+                    const data = await res.json();
+                    const listDiv = document.getElementById("pending-list");
+                    
+                    if (data.pending_users.length === 0) {
+                        listDiv.innerHTML = "None";
+                        return;
+                    }
+
+                    listDiv.innerHTML = data.pending_users.map(name => `
+                        <div style="margin-bottom: 5px;">
+                            ${name} <button class="debug-btn" onclick="approveUser('${name}')">Approve</button>
+                        </div>
+                    `).join('');
+                }
+
+                // Initial fetch when the panel is loaded
+                refreshWaitingList();
+
+                async function approveUser(name) {
+                    await fetch('/api/approve-user', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: name, status: "approved" })
+                    });
+                    
+                    // Instantly refresh the list when someone is approved
+                    refreshWaitingList();
+                }
+            </script>
+
+            <div class="debug-section"><h3>State</h3><pre id="debug-state">{}</pre></div>
+            <div class="debug-section"><h3>Attributes</h3><pre id="debug-attributes">{}</pre></div>
+            <div class="debug-section"><h3>Memories</h3><pre id="debug-memories">[]</pre></div>
+
+            <!-- TSUNDERE TOGGLE SWITCH -->
+            <div class="debug-section" style="margin-top: 20px;">
+                <h3>Behavioral Modifier</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px; background: rgba(0, 0, 0, 0.3); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--glass-border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 13px; color: var(--text-main);">Tsundere Mode</span>
+                        <label class="switch">
+                            <input type="checkbox" id="tsundere-toggle" onchange="toggleTsundere(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <button class="debug-btn" style="width: 100%; font-size: 12px; padding: 8px;" onclick="updateAndRestart()">Update Behavioral Modifier and Restart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="image-modal" onclick="closeModal()" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+        <img id="full-image" src="" style="max-width: 90%; max-height: 90%; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+    </div>
+    <script src="/scripts.js"></script>
+</body>
+</html>

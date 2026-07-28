@@ -1,0 +1,1 @@
+used model: llama-3-typhoon-v1.5x-8b-instruct.IQ3_M.gguf

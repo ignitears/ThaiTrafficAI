@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+./llama_cpp_python-0.3.33-py3-none-win_amd64.whl
+sentence-transformers
+faiss-cpu
+pydantic

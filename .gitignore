@@ -1,0 +1,14 @@
+# Ignore huge AI model files
+*.gguf
+Model/Model.gguf
+*.whl
+# Ignore Python virtual environments
+.venv/
+venv/
+env/
+
+# Ignore Python cache and system logs
+__pycache__/
+*.pyc
+*.log
+*.whl

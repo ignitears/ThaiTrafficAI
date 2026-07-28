@@ -1,0 +1,702 @@
+/* 1. MINIMAL DARK (Default) */
+body.theme-minimal-dark {
+    --bg-gradient: linear-gradient(135deg, #090b14, #121420, #0a0f1c);
+    --glass-surface: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+    --accent: #8b5cf6;
+    --user-bubble: rgba(139, 92, 246, 0.15);
+}
+
+/* 2. URBAN ANIME (Soft neons, deeper blues) */
+body.theme-urban-anime {
+    --bg-gradient: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    --glass-surface: rgba(233, 69, 96, 0.05);
+    --glass-border: rgba(233, 69, 96, 0.15);
+    --text-main: #f1f1f1;
+    --text-muted: #a0a0b0;
+    --accent: #e94560;
+    --user-bubble: rgba(233, 69, 96, 0.2);
+}
+
+/* 3. INDUSTRIAL (Gritty, monochrome, bronze accents) */
+body.theme-industrial {
+    --bg-gradient: linear-gradient(135deg, #111111, #1a1a1a, #0a0a0a);
+    --glass-surface: rgba(255, 255, 255, 0.02);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --text-main: #dfdfdf;
+    --text-muted: #777777;
+    --accent: #b8860b;
+    --user-bubble: rgba(184, 134, 11, 0.1);
+}
+
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: system-ui, -apple-system, sans-serif; 
+}
+
+body { 
+    background: var(--bg-gradient); 
+    color: var(--text-main); 
+    display: flex; 
+    flex-direction: row; 
+    height: 100dvh; 
+    overflow: hidden; 
+}
+
+/* MAIN LAYOUT */
+#main-container { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    position: relative; 
+}
+
+header { 
+    background: var(--glass-surface);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 16px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid var(--glass-border); 
+    font-weight: 600; 
+    letter-spacing: 0.5px;
+}
+
+.debug-btn { 
+    background: transparent; 
+    color: var(--text-muted); 
+    border: 1px solid var(--glass-border); 
+    padding: 6px 16px; 
+    border-radius: 20px; 
+    cursor: pointer; 
+    transition: 0.2s;
+}
+
+.debug-btn:hover { 
+    background: var(--glass-surface); 
+    color: var(--text-main); 
+}
+
+#chat-box { 
+    flex: 1; 
+    overflow-y: auto; 
+    padding: 24px calc(50vw - 400px); 
+    display: flex; 
+    flex-direction: column; 
+    gap: 20px; 
+}
+
+#input-area { 
+    background: var(--glass-surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 18px calc(50vw - 400px); 
+    display: flex; 
+    gap: 12px; 
+    border-top: 1px solid var(--glass-border); 
+}
+
+/* =========================================
+   MOBILE RESPONSIVENESS (STRICT FIT)
+========================================= */
+@media (max-width: 768px) {
+    /* 1. Force the body to never scroll sideways */
+    html, body {
+        overflow-x: hidden;
+        width: 100vw;
+        max-width: 100vw;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 2. Stack the header and force it to stay in bounds */
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    header > div {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap; /* Allows buttons to wrap if screen is very narrow */
+    }
+
+    /* 3. Make chat bubbles wrap long text so they don't stretch the screen */
+    .msg {
+        max-width: 90%; 
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* 4. Shrink the input area to fit exactly */
+    #input-area {
+        padding: 10px;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Prevent iOS auto-zoom */
+    #msg-input {
+        font-size: 16px; 
+        width: 100%; /* Ensure input doesn't push buttons off screen */
+    }
+
+    /* 5. Force debug panel to be exactly screen width */
+    #debug-sidebar {
+        width: 100vw;
+        max-width: 100vw;
+        right: -100vw; /* Hide it completely off-screen when closed */
+    }
+    
+    #debug-sidebar.open {
+        right: 0;
+    }
+    
+    /* 6. Fix <pre> tags in debug panel causing horizontal stretch */
+    pre {
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+}
+
+/* --- Z-INDEX FIX --- */
+header {
+    position: relative;
+    z-index: 100; /* Forces header above the chat area */
+}
+.custom-dropdown.open { z-index: 1000; }
+.dropdown-menu { z-index: 9999 !important; }
+
+/* --- LEFT CHARACTER SIDEBAR --- */
+#char-sidebar { 
+    position: absolute; 
+    left: 0; 
+    top: 0;
+    height: 100%;
+    z-index: 2000; /* Pushes it above EVERYTHING */
+    width: 0; 
+    background: rgba(0, 0, 0, 0.6); 
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    overflow-x: hidden; 
+    display: flex; 
+    flex-direction: column; 
+    border-right: 0px solid var(--glass-border);
+}
+
+#char-sidebar.open { 
+    width: 280px; 
+    border-right: 1px solid var(--glass-border); 
+}
+
+.char-item {
+    padding: 12px 16px;
+    background: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 500;
+}
+
+.char-item:hover {
+    background: var(--accent);
+    color: #fff;
+    transform: translateX(4px); /* Slight slide animation on hover */
+}
+
+/* USER STYLES */
+.msg { 
+    max-width: 85%; 
+    padding: 14px 20px; 
+    border-radius: 16px; 
+    line-height: 1.5; 
+    font-size: 0.95rem; 
+    word-break: break-word; 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    animation: fadeIn 0.3s ease forwards;
+    border-radius: var(--bubble-radius, 16px);
+    clip-path: var(--clip-shape, none);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.user { 
+    background: var(--user-bubble); 
+    align-self: flex-end; 
+    border-bottom-right-radius: 4px;
+}
+
+.char { 
+    background: var(--glass-surface); 
+    align-self: flex-start; 
+    border-bottom-left-radius: 4px; 
+}
+
+/* PREMIUM WAVE TYPING INDICATOR */
+.typing-indicator {
+    display: flex;
+    gap: 6px;
+    padding: 0 20px; /* Balanced horizontal padding */
+    align-items: center; 
+    border-radius: 16px;
+    background: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    width: fit-content;
+    height: 44px; /* Fixed height keeps the box completely stable */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.typing-indicator span {
+    width: 6px;
+    height: 6px;
+    background-color: var(--text-muted);
+    border-radius: 50%;
+    display: inline-block;
+    animation: premiumWave 1.2s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) { animation-delay: 0s; }
+.typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes premiumWave {
+    0%, 60%, 100% { 
+        transform: translateY(0); 
+        opacity: 0.4; 
+    }
+    30% { 
+        transform: translateY(-4px); 
+        opacity: 1; 
+        background-color: var(--text-main); 
+    }
+}
+
+/* INPUT BAR */
+input { 
+    flex: 1; 
+    background: rgba(0, 0, 0, 0.2); 
+    border: 1px solid var(--glass-border); 
+    color: var(--text-main); 
+    padding: 14px 20px; 
+    border-radius: 12px; 
+    outline: none; 
+    font-size: 0.95rem; 
+    transition: 0.2s ease;
+    border-radius: var(--ui-radius, 12px);
+    clip-path: var(--clip-shape, none);
+}
+
+input:focus { 
+    border-color: rgba(255, 255, 255, 0.2); 
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Primary Action Button (Send) */
+button.send {
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    padding: 0 24px; 
+    border-radius: 12px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: 0.2s ease;
+}
+
+button.send:hover {
+    filter: brightness(1.05); /* Toned down so it doesn't glare */
+    transform: translateY(-1px);
+}
+
+.icon-btn:hover, .debug-btn:hover, .dropdown-toggle:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+    transform: translateY(-1px);
+}
+
+.icon-btn:hover, .debug-btn:hover, .dropdown-toggle:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+    transform: translateY(-1px);
+}
+
+.action-text {
+    color: var(--text-muted); 
+    font-style: italic;
+}
+
+/* DEBUG SIDEBAR */
+
+#debug-sidebar { 
+    position: absolute; /* Makes it float over the chat */
+    right: 0; 
+    top: 0;
+    height: 100%;
+    z-index: 100; /* Keeps it on top of everything else */
+    width: 0; 
+    flex-shrink: 0; 
+    background: rgba(0, 0, 0, 0.4); 
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-left: 0px solid var(--glass-border); 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    overflow-x: hidden; 
+    display: flex; 
+    flex-direction: column; 
+}
+
+#debug-sidebar.open { 
+    width: 320px; 
+    border-left: 1px solid var(--glass-border); 
+}
+
+.debug-content { 
+    padding: 24px; 
+    width: 320px; 
+    overflow-y: auto; 
+}
+
+.debug-section h3 { 
+    color: var(--text-muted); 
+    font-size: 12px; 
+    border-bottom: 1px solid var(--glass-border); 
+    padding-bottom: 8px; 
+    margin-bottom: 12px; 
+    text-transform: uppercase; 
+    letter-spacing: 1px;
+}
+
+/* CLOSE BUTTON STYLES */
+.debug-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.close-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+pre { 
+    background: rgba(0, 0, 0, 0.3); 
+    padding: 12px; 
+    border-radius: 8px; 
+    font-size: 12px; 
+    color: var(--accent); 
+    white-space: pre-wrap; 
+    word-wrap: break-word; 
+    border: 1px solid var(--glass-border);
+}
+
+/* CUSTOM SCROLLBAR / SLIDER */
+::-webkit-scrollbar {
+    width: 6px; /* Makes the vertical scrollbar thin and modern */
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; /* Hides the ugly track box completely */
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15); /* Soft glass pill */
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+/* Lights up with your accent color when you hover over it */
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.5); 
+}
+
+/* ICON BUTTONS */
+.icon-btn {
+    background: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    border-radius: 12px;
+    width: 48px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover { 
+    background: rgba(255, 255, 255, 0.1); 
+    color: var(--text-main); 
+}
+
+.icon-btn:active { 
+    transform: scale(0.96); 
+}
+
+/* Customizing the Select Dropdown */
+.custom-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--glass-surface);
+    color: var(--text-main);
+    border: 1px solid var(--glass-border);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.dropdown-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent);
+}
+
+.dropdown-menu {
+    display: none; 
+    position: absolute;
+    top: 100%;
+    left: 0; /* <--- CHANGED THIS FROM right: 0 */
+    margin-top: 8px;
+    background: rgba(10, 12, 18, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 160px;
+    z-index: 1000;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: dropIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.custom-dropdown.open .dropdown-menu {
+    display: block;
+}
+
+@keyframes dropIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    color: var(--text-muted);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.dropdown-item:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+/* =========================================
+   THEME DEFINITIONS (Colors & Shapes)
+========================================= */
+
+/* 1. GEMINI MINIMAL (Smooth, calm blue, soft pills) */
+body.theme-gemini {
+    --bg-gradient: #131314;
+    --glass-surface: #1e1f20;
+    --glass-border: #333537;
+    --text-main: #e3e3e3;
+    --text-muted: #c4c7c5;
+    --accent: #8ab4f8; 
+    --secondary: #282a2c;
+    --user-bubble: #282a2c;
+    --bubble-radius: 24px;
+    --ui-radius: 24px;
+    --clip-shape: none;
+}
+
+/* 2. CYBER-FUTURISTIC (Deep violet/blue, cyan UI, neon pink user bubbles) */
+body.theme-cyber {
+    --bg-gradient: linear-gradient(135deg, #090914, #051428);
+    --glass-surface: transparent;
+    --glass-border: rgba(0, 200, 200, 0.4);
+    --text-main: #d0f0f0;
+    --text-muted: #008888;
+    --accent: #00aaaa; 
+    --secondary: rgba(0, 170, 170, 0.1);
+    --user-bubble: rgba(255, 0, 128, 0.15); /* Neon pink pop */
+    --bubble-radius: 0px;
+    --ui-radius: 0px;
+    --clip-shape: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+}
+
+/* 3. PROXY TERMINAL (Dark charcoal, yellow accents, orange user bubbles) */
+body.theme-proxy {
+    --bg-gradient: #161616;
+    --glass-surface: #2b2b2b;
+    --glass-border: #000000; 
+    --text-main: #ffffff;
+    --text-muted: #aaaaaa;
+    --accent: #d4a000; 
+    --secondary: #3d3d3d;
+    --user-bubble: rgba(255, 100, 0, 0.15); /* Warning orange pop */
+    --bubble-radius: 0px; 
+    --ui-radius: 0px;
+    --clip-shape: polygon(2px 0%, 100% 4px, calc(100% - 2px) 100%, 0% calc(100% - 4px)); 
+}
+
+/* 4. HOLLOW MIST -> KAWAII HEART (Retains colors, adds heart prints, softer shapes) */
+body.theme-hollow-mist {
+    /* 3-Layered Big Heart Background using SVG data URIs and layered gradients */
+    --bg-gradient: 
+        /* Layer 3: Outer soft ambient glow */
+        radial-gradient(circle at 50% 50%, rgba(180, 100, 200, 0.15) 0%, transparent 60%),
+        /* Layer 2: Center glowing core aura */
+        radial-gradient(circle at 50% 45%, rgba(92, 194, 170, 0.08) 0%, transparent 40%),
+        /* Layer 1: The Giant 3-Layered Vector Heart (Centered, non-repeating) */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='800' viewBox='0 0 100 100'%3E%3Cg transform='translate(50, 48) scale(0.75) translate(-50, -50)'%3E%3C!-- Outer Soft Shadow / Depth Layer --%3E%3Cpath fill='%2368297d' fill-opacity='0.15' d='M50 88 C 50 88, 12 58, 12 35 C 12 18, 28 14, 40 25 C 47 31, 50 36, 50 36 C 50 36, 53 31, 60 25 C 72 14, 88 18, 88 35 C 88 58, 50 88, 50 88 Z' transform='translate(0, 3)'/%3E%3C!-- Middle Vibrant Accent Layer --%3E%3Cpath fill='%23b066c8' fill-opacity='0.22' d='M50 85 C 50 85, 10 55, 10 32 C 10 16, 26 12, 38 23 C 46 30, 50 35, 50 35 C 50 35, 54 30, 62 23 C 74 12, 90 16, 90 32 C 90 55, 50 85, 50 85 Z'/%3E%3C!-- Inner Core Highlight Layer --%3E%3Cpath fill='%23ebd4f5' fill-opacity='0.12' d='M50 80 C 50 80, 16 52, 16 31 C 16 18, 30 15, 40 23 C 46 28, 50 33, 50 33 C 50 33, 54 28, 60 23 C 70 15, 84 18, 84 31 C 84 52, 50 80, 50 80 Z'/%3E%3C/g%3E%3C/svg%3E"),
+        /* Base Deep Tone Gradient */
+        linear-gradient(to bottom, #140d1a, #1f1429);
+
+    /* Ensure the single background graphic centers nicely and doesn't tile */
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    
+    --glass-surface: rgba(180, 100, 200, 0.05);
+    --glass-border: rgba(180, 100, 200, 0.15);
+    --text-main: #ebd4f5;
+    --text-muted: #a684b8;
+    --accent: #b066c8; 
+    --secondary: rgba(176, 102, 200, 0.15);
+    --user-bubble: rgba(92, 194, 170, 0.15); /* Ghostly mint pop */
+    
+    /* KAWAII SHAPES */
+    --bubble-radius: 999px; /* Max roundness for pill shapes */
+    --ui-radius: 30px;
+    --clip-shape: none;
+}
+
+/* 5. GRANITE OASIS (Optimized: Textured background and fixed panels, smooth moving bubbles) */
+body.theme-granite-oasis {
+    --bg-gradient: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E"), #23211c;
+    --glass-surface: rgba(15, 13, 10, 0.95);
+    --glass-border: #9e8543; 
+    --text-main: #dfcfa3;
+    --text-muted: #7d6e42;
+    --accent: #9e8543; 
+    --secondary: rgba(158, 133, 67, 0.1);
+    --user-bubble: rgba(158, 133, 67, 0.15); 
+    --bubble-radius: 0px; 
+    --ui-radius: 0px;     
+    --clip-shape: polygon(0% 4px, 5px 0%, 95% 2px, 100% 0%, 99% 85%, 95% 100%, 8px 98%, 0% 95%);
+}
+
+/* Re-injecting the cool texture ONLY into fixed, non-scrolling UI containers */
+body.theme-granite-oasis header,
+body.theme-granite-oasis #input-area,
+body.theme-granite-oasis #char-sidebar,
+body.theme-granite-oasis #debug-sidebar {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E") !important;
+    background-color: rgba(15, 13, 10, 0.95) !important;
+}
+
+body.theme-granite-oasis .spinner {
+    border-color: rgba(158, 133, 67, 0.2);
+    border-top-color: #fbdc5a;
+}
+
+#loading-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);
+    z-index: 3000; display: flex; justify-content: center; align-items: center;
+}
+.spinner {
+    width: 40px; height: 40px; border: 4px solid var(--glass-border);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+}
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255,255,255,0.2);
+    transition: 0.3s;
+    border-radius: 22px;
+    border: 1px solid var(--glass-border);
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+.switch input:checked + .slider {
+    background-color: var(--accent);
+}
+.switch input:checked + .slider:before {
+    transform: translateX(18px);
+}

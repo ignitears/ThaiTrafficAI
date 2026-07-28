@@ -1,0 +1,2 @@
+#bellow is a run command for uvicorn, make sure to run it in the same directory where app.py is located, and ensure that the model path in the code is correct.
+# uvicorn app:app --host 0.0.0.0 --port 8000

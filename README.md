@@ -7,18 +7,15 @@ A lightweight, local AI assistant designed to answer questions regarding Thai tr
 To keep your system clean, this project uses an isolated Python environment and a simple installation script.
 
 1. **Install Python:** Ensure you have Python installed on your Windows machine. **Important:** Check the box that says *"Add python.exe to PATH"* during installation.
-2. **Download the AI Model:** 
-   * Download the `llama-3-typhoon-v1.5-8b-instruct.IQ3_M.gguf` file from [Hugging Face](https://huggingface.co/typhoon-ai/llama-3-typhoon-v1.5-8b-instruct-gguf).
-   * Place the downloaded `.gguf` file inside the `Model/` folder.
-3. **Run Setup:** Double-click `1_Install.bat`. This will automatically build a virtual environment and safely install all required packages.
+2. **Run Setup:** Double-click **`1_Install.bat`**. This script will automatically create a virtual environment, handle package requirements, and fetch the required 3.78 GB Typhoon AI model directly from Hugging Face into the local directory (skipping the download if it already exists)[cite: 8].
 
 ## How to Use
 
 Once installed, you never have to touch the terminal again.
 
-* Double-click **`2_Start_AI.vbs`** to launch the server silently. 
-* A control panel will appear, and once the model finishes loading into memory, your web browser will open automatically to the chat interface.
-* You can safely shut down the server anytime by clicking the **"Stop Server & Exit"** button on the control panel.
+* Double-click **`2_Start_AI.vbs`** to launch the server silently[cite: 6]. 
+* A control panel will appear, and once the model finishes loading into memory, your web browser will open automatically to the chat interface[cite: 12].
+* You can safely shut down the server anytime by clicking the **"Stop Server & Exit"** button on the control panel[cite: 12].
 
 ## Data Handling & Processing
 
@@ -33,5 +30,5 @@ The RAG context database and FAISS indexing are managed externally. If you want 
 | **OS** | Windows 10/11 (64-bit) | Windows 10/11 (64-bit) |
 | **Processor** | Intel Core i5 / AMD Ryzen 5 | Intel Core i7 / AMD Ryzen 7 |
 | **Memory (RAM)** | 8 GB RAM | 16 GB RAM |
-| **Graphics (VRAM)** | Integrated Graphics (CPU Mode) | Dedicated GPU with 6+ GB VRAM (e.g., RTX 4050) |
+| **Graphics (VRAM)** | Integrated Graphics (CPU Mode) | Dedicated GPU with 6+ GB VRAM (e.g., RTX 4050)[cite: 3] |
 | **Storage** | 6 GB available space (SSD) | 10 GB available space (NVMe SSD) |

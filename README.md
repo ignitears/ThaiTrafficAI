@@ -13,7 +13,7 @@ To keep your system clean, this project uses an isolated Python environment and 
 
 Once installed, you never have to touch the terminal again.
 
-* Double-click **`2_Start_AI.vbs`** to launch the server silently[cite: 6]. 
+* Double-click **`2_Start_AI.vbs`** to launch the server silently. 
 * A control panel will appear, and once the model finishes loading into memory, your web browser will open automatically to the chat interface.
 * You can safely shut down the server anytime by clicking the **"Stop Server & Exit"** button on the control panel.
 

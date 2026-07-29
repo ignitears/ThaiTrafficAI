@@ -7,7 +7,7 @@ A lightweight, local AI assistant designed to answer questions regarding Thai tr
 To keep your system clean, this project uses an isolated Python environment and a simple installation script.
 
 1. **Install Python:** Ensure you have Python installed on your Windows machine. **Important:** Check the box that says *"Add python.exe to PATH"* during installation.
-2. **Run Setup:** Double-click **`1_Install.bat`**. This script will automatically create a virtual environment, handle package requirements, and fetch the required 3.78 GB Typhoon AI model directly from Hugging Face into the local directory (skipping the download if it already exists)[cite: 8].
+2. **Run Setup:** Double-click **`1_Install.bat`**. This script will automatically create a virtual environment, handle package requirements, and fetch the required 3.78 GB Typhoon AI model directly from Hugging Face into the local directory
 
 ## How to Use
 

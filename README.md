@@ -14,8 +14,8 @@ To keep your system clean, this project uses an isolated Python environment and 
 Once installed, you never have to touch the terminal again.
 
 * Double-click **`2_Start_AI.vbs`** to launch the server silently[cite: 6]. 
-* A control panel will appear, and once the model finishes loading into memory, your web browser will open automatically to the chat interface[cite: 12].
-* You can safely shut down the server anytime by clicking the **"Stop Server & Exit"** button on the control panel[cite: 12].
+* A control panel will appear, and once the model finishes loading into memory, your web browser will open automatically to the chat interface.
+* You can safely shut down the server anytime by clicking the **"Stop Server & Exit"** button on the control panel.
 
 ## Data Handling & Processing
 
@@ -30,5 +30,5 @@ The RAG context database and FAISS indexing are managed externally. If you want 
 | **OS** | Windows 10/11 (64-bit) | Windows 10/11 (64-bit) |
 | **Processor** | Intel Core i5 / AMD Ryzen 5 | Intel Core i7 / AMD Ryzen 7 |
 | **Memory (RAM)** | 8 GB RAM | 16 GB RAM |
-| **Graphics (VRAM)** | Integrated Graphics (CPU Mode) | Dedicated GPU with 6+ GB VRAM (e.g., RTX 4050)[cite: 3] |
+| **Graphics (VRAM)** | Integrated Graphics (CPU Mode) | Dedicated GPU with 6+ GB VRAM (e.g., RTX 4050) |
 | **Storage** | 6 GB available space (SSD) | 10 GB available space (NVMe SSD) |

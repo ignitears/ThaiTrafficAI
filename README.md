@@ -19,8 +19,9 @@ Once installed, you never have to touch the terminal again.
 
 ## Data Handling & Processing
 
-The RAG context database and FAISS indexing are managed externally. If you want to view, modify, or re-process the source data used for this AI, you can access the processing notebook here:
+The RAG database for this project is prepared and structured using Google Colab. It uses the Gemini AI to clean and group Thai traffic law text into a well-organized JSON format so the data is easier to read for the llm.
 
+If you want to view the processing steps or update the raw dataset, you can access the processing notebook here:
 * **[Data Handle - Google Colab](https://colab.research.google.com/drive/1u93UYDot8_l-g9hdCPQECUjsJJxMnniT?usp=sharing)**
 
 ## System Requirements

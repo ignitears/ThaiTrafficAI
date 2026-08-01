@@ -23,8 +23,7 @@ Once installed, you never have to touch the terminal again.
 2. Clean the mess from PDF extraction
 3. The RAG database for this project is prepared and structured using Google Colab. It uses the Gemini AI to clean and group Thai traffic law text into a well-organized JSON format so the data is easier to read for the llm.
 
-If you want to view the processing steps or update the raw dataset, you can access the processing notebook here:
-* **[Data Handle - Google Colab](https://colab.research.google.com/drive/1u93UYDot8_l-g9hdCPQECUjsJJxMnniT?usp=sharing)**
+If you want to view the processing steps or update the raw dataset, you can access the processing notebook by downloading organize_data.ipynb from the data folder and open it in google colab.
 
 ## System Requirements
 
